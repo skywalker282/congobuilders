@@ -555,7 +555,7 @@ Company administrators should be able to create, update, reorder, publish and un
 
 ## 8.2 Services based on company profile
 
-The initial content should include:
+The initial content should include (Create them on the remote instance if they dont exist):
 
 1. New Construction.
 2. Civil Engineering.
