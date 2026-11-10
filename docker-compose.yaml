@@ -1,6 +1,4 @@
 
-version: "3.7"
-
 services:
   strapi:
     image: ghcr.io/skywalker282/congobuilders-strapi:latest
@@ -13,6 +11,27 @@ services:
     volumes:
       - strapi-data:/opt/app/.tmp
       - strapi-uploads:/opt/app/public/uploads
+    init: true
+    restart: unless-stopped
+
+  website:
+    image: ghcr.io/skywalker282/congobuilders-website:latest
+    build:
+      context: ./www
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://congo-btp.com}
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 6005
+      STRAPI_API_URL: ${STRAPI_API_URL:-http://strapi:1337}
+      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN:-}
+      STRAPI_INQUIRY_API_TOKEN: ${STRAPI_INQUIRY_API_TOKEN:-}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://congo-btp.com}
+    ports:
+      - "6005:6005"
+    depends_on:
+      - strapi
     init: true
     restart: unless-stopped
 
