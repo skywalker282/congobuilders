@@ -1,0 +1,114 @@
+{
+  "kind": "collectionType",
+  "collectionName": "properties",
+  "info": {
+    "singularName": "property",
+    "pluralName": "properties",
+    "displayName": "property"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "town": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "HOUSE",
+        "APARTMENT",
+        "LAND",
+        "OFFICE",
+        "COMMERCIAL",
+        "INDUSTRIAL",
+        "OTHER"
+      ]
+    },
+    "price": {
+      "type": "integer"
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": [
+        "USD",
+        "CDF"
+      ]
+    },
+    "period": {
+      "type": "enumeration",
+      "enum": [
+        "DAY",
+        "WEEK",
+        "MONTH",
+        "YEAR"
+      ]
+    },
+    "inquiries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inquiry.inquiry",
+      "mappedBy": "property"
+    },
+    "promotions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::promotion.promotion",
+      "mappedBy": "property"
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "bedrooms": {
+      "type": "integer"
+    },
+    "bathrooms": {
+      "type": "integer"
+    },
+    "livingrooms": {
+      "type": "integer"
+    },
+    "transaction": {
+      "type": "enumeration",
+      "enum": [
+        "RENT",
+        "SALE"
+      ]
+    },
+    "availability": {
+      "type": "enumeration",
+      "enum": [
+        "AVAILABLE",
+        "RESERVED",
+        "RENTED",
+        "SOLD"
+      ]
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "neighborhood": {
+      "type": "string"
+    }
+  }
+}

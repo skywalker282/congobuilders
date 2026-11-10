@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output and caches
+.next/
+out/
+dist/
+build/
+.cache/
+.turbo/
+.strapi/
+*.tsbuildinfo
+
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Strapi local data and uploaded media
+core/.tmp/
+core/public/uploads/*
+!core/public/uploads/.gitkeep
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json

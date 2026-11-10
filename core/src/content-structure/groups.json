@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "sections": {
+    "collectionTypes": {
+      "groups": [
+        {
+          "parent": null,
+          "name": "New folder",
+          "id": "grp_eaa169db576444599e51f9b0",
+          "children": []
+        }
+      ]
+    },
+    "singleTypes": {
+      "groups": []
+    }
+  }
+}

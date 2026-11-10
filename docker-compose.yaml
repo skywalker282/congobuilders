@@ -1,0 +1,21 @@
+
+version: "3.7"
+
+services:
+  strapi:
+    image: ghcr.io/skywalker282/congobuilders-strapi:latest
+    build:
+      context: ./core
+    env_file:
+      - ./core/.env
+    ports:
+      - "6004:1337"
+    volumes:
+      - strapi-data:/opt/app/.tmp
+      - strapi-uploads:/opt/app/public/uploads
+    init: true
+    restart: unless-stopped
+
+volumes:
+  strapi-data:
+  strapi-uploads:
