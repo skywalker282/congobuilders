@@ -58,9 +58,13 @@ metadata and the sitemap.
 
 ## Docker Compose
 
-From the repository root, configure `NEXT_PUBLIC_SITE_URL` and, if needed,
-`STRAPI_API_TOKEN` and `STRAPI_INQUIRY_API_TOKEN` in the Compose environment
-(for example, in the root `.env` file), then run:
+From the repository root, create the Compose environment file from the template:
+
+```sh
+cp .env.example .env
+```
+
+Set the optional server-side API tokens in `.env`, then run:
 
 ```sh
 docker compose up --build

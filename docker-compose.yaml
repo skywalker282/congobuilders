@@ -19,15 +19,15 @@ services:
     build:
       context: ./www
       args:
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://congo-btp.com}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
-      PORT: 6005
-      STRAPI_API_URL: ${STRAPI_API_URL:-http://strapi:1337}
-      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN:-}
-      STRAPI_INQUIRY_API_TOKEN: ${STRAPI_INQUIRY_API_TOKEN:-}
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://congo-btp.com}
+      PORT: 3000
+      STRAPI_API_URL: http://strapi:1337
+      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN-}
+      STRAPI_INQUIRY_API_TOKEN: ${STRAPI_INQUIRY_API_TOKEN-}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
     ports:
       - "6005:3000"
     depends_on:
