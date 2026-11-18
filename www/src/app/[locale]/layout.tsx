@@ -27,6 +27,9 @@ export async function generateMetadata({
       default: 'Congo Builders | Building & Innovation',
       template: '%s | Congo Builders',
     },
+    icons: {
+      icon: '/images/logowhite.png',
+    },
     description,
     openGraph: {
       type: 'website',

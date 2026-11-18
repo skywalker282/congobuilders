@@ -16,8 +16,8 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
     encryptionKey: env('ENCRYPTION_KEY')!,
   },
   flags: {
-    nps: env.bool('FLAG_NPS', true),
-    promoteEE: env.bool('FLAG_PROMOTE_EE', true),
+    nps: false,
+    promoteEE: false,
     docLinks: env.bool('FLAG_DOC_LINKS', true),
   },
 });
