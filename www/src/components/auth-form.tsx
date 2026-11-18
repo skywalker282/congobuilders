@@ -45,7 +45,7 @@ export function AuthForm({ mode, returnTo }: { mode: 'login' | 'register'; retur
     <form className="contact-form auth-form" onSubmit={submit}>
       {mode === 'register' ? (
         <>
-          <label>{t('username')}<input name="username" required minLength={3} maxLength={50} autoComplete="username" pattern="[A-Za-z0-9._-]+" /></label>
+          <label>{t('username')}<input name="username" required minLength={3} maxLength={50} autoComplete="username" pattern="[A-Za-z0-9._ -]+" /></label>
           <label>{t('email')}<input name="email" type="email" required maxLength={254} autoComplete="email" /></label>
           <label>{t('password')}<input name="password" type="password" required minLength={8} maxLength={128} autoComplete="new-password" /></label>
         </>

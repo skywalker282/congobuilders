@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { authCookieName, getStrapiApiUrl } from '@/lib/strapi-auth';
 
 const schema = z.object({
-  username: z.string().trim().min(3).max(50).regex(/^[a-zA-Z0-9._-]+$/),
+  username: z.string().trim().min(3).max(50).regex(/^[a-zA-Z0-9._ -]+$/),
   email: z.string().trim().email().max(254),
   password: z.string().min(8).max(128),
 });
