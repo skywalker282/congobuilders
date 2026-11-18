@@ -30,6 +30,8 @@ export type UserInquiry = {
   message: string;
   property: string;
   status: string;
+  price: number | null;
+  currency: 'USD' | 'CDF' | null;
 };
 
 type StrapiRecord = Record<string, unknown> & {
@@ -177,6 +179,10 @@ export async function getMyInquiries(token: string): Promise<
       message: typeof record.message === 'string' ? record.message : '',
       property: typeof property.name === 'string' ? property.name : '',
       status: typeof record.status === 'string' ? record.status : 'pending',
+      price: typeof record.price === 'number' && Number.isInteger(record.price) && record.price >= 0
+        ? record.price
+        : null,
+      currency: record.currency === 'USD' || record.currency === 'CDF' ? record.currency : null,
     });
   }
 

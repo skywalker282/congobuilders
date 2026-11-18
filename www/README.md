@@ -30,7 +30,10 @@ handler attaches each inquiry to the authenticated user and starts it with a
 Enable the `inquiry.createMine` and `inquiry.findMine` actions for the
 Authenticated role in Strapi's Users & Permissions settings. The inquiry
 content type also needs its status field applied when deploying the updated
-Strapi schema.
+Strapi schema. The Next.js route sends the JWT and the custom endpoint's
+`{ data: { message, property: documentId } }` body. The offer amount and
+currency are retained in the message; the current Core create handler does not
+persist them as structured `price` and `currency` fields.
 
 `STRAPI_API_TOKEN` is optional and is intended only for server-side collection
 requests that require authentication.
@@ -47,9 +50,12 @@ browser.
 Customers can edit or delete only their own pending requests from the account
 page. These operations use Strapi 5's `PUT /api/inquiries/:documentId` with a
 `{ data: { message } }` body and `DELETE /api/inquiries/:documentId` without a
-body. Set `STRAPI_INQUIRY_API_TOKEN` to a server-only API token restricted to
-`inquiry.update` and `inquiry.delete`; do not grant these collection-wide
-permissions to the Authenticated role.
+body, authenticated with the customer's session JWT. The Next.js Server Action
+checks that the inquiry belongs to the customer and is still pending. Strapi's
+standard `inquiry.update` and `inquiry.delete` permissions are collection-wide,
+however; enabling them for the Authenticated role allows any authenticated
+customer to call Strapi directly and mutate other inquiries. Use owner-scoped
+Core routes before production if that access must be prevented.
 The browser posts credentials to the same-origin `/api/auth/login` route; the
 Next.js server forwards them to `${STRAPI_API_URL}/api/auth/local`. Set
 `STRAPI_API_URL` to the absolute Strapi base URL (for example,

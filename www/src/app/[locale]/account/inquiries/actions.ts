@@ -4,7 +4,7 @@ import { getMyInquiries, getSessionToken, getStrapiApiUrl } from '@/lib/strapi-a
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 type InquiryAccess =
-  | { ok: true; id: string; apiUrl: string; apiToken: string }
+  | { ok: true; id: string; apiUrl: string; sessionToken: string }
   | { ok: false; error: string };
 
 async function getPendingInquiryAccess(id: string): Promise<InquiryAccess> {
@@ -32,13 +32,12 @@ async function getPendingInquiryAccess(id: string): Promise<InquiryAccess> {
   }
 
   const apiUrl = getStrapiApiUrl();
-  const apiToken = process.env.STRAPI_INQUIRY_API_TOKEN;
-  if (!apiUrl || !apiToken) {
-    console.error('Inquiry editing and deletion require STRAPI_API_URL and STRAPI_INQUIRY_API_TOKEN.');
+  if (!apiUrl) {
+    console.error('Inquiry editing and deletion require a valid STRAPI_API_URL.');
     return { ok: false, error: 'Inquiry editing is not configured. Please contact us.' };
   }
 
-  return { ok: true, id: inquiryId, apiUrl, apiToken };
+  return { ok: true, id: inquiryId, apiUrl, sessionToken };
 }
 
 async function getStrapiError(response: Response, action: string): Promise<string> {
@@ -57,10 +56,21 @@ async function getStrapiError(response: Response, action: string): Promise<strin
   return message || `We could not ${action} this inquiry. Please try again.`;
 }
 
-export async function updateMyInquiry(id: string, message: string): Promise<ActionResult> {
+export async function updateMyInquiry(
+  id: string,
+  message: string,
+  price: number,
+  currency: 'USD' | 'CDF',
+): Promise<ActionResult> {
   const normalizedMessage = message.trim();
   if (normalizedMessage.length < 10 || normalizedMessage.length > 3000) {
     return { ok: false, error: 'The message must be between 10 and 3,000 characters.' };
+  }
+  if (!Number.isSafeInteger(price) || price < 0) {
+    return { ok: false, error: 'The offer price must be a valid non-negative integer.' };
+  }
+  if (currency !== 'USD' && currency !== 'CDF') {
+    return { ok: false, error: 'Please choose USD or CDF.' };
   }
 
   const access = await getPendingInquiryAccess(id);
@@ -71,10 +81,16 @@ export async function updateMyInquiry(id: string, message: string): Promise<Acti
     response = await fetch(`${access.apiUrl}/api/inquiries/${encodeURIComponent(access.id)}`, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${access.apiToken}`,
+        Authorization: `Bearer ${access.sessionToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: { message: normalizedMessage } }),
+      body: JSON.stringify({
+        data: {
+          message: normalizedMessage,
+          price,
+          currency,
+        },
+      }),
       cache: 'no-store',
     });
   } catch (error) {
@@ -94,7 +110,7 @@ export async function deleteMyInquiry(id: string): Promise<ActionResult> {
   try {
     response = await fetch(`${access.apiUrl}/api/inquiries/${encodeURIComponent(access.id)}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${access.apiToken}` },
+      headers: { Authorization: `Bearer ${access.sessionToken}` },
       cache: 'no-store',
     });
   } catch (error) {

@@ -11,6 +11,8 @@ export function InquiryList({ inquiries }: { inquiries: UserInquiry[] }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string>();
   const [draftMessage, setDraftMessage] = useState('');
+  const [draftPrice, setDraftPrice] = useState('');
+  const [draftCurrency, setDraftCurrency] = useState<'USD' | 'CDF'>('USD');
   const [busyId, setBusyId] = useState<string>();
   const [error, setError] = useState<{ id: string; message: string }>();
 
@@ -18,7 +20,12 @@ export function InquiryList({ inquiries }: { inquiries: UserInquiry[] }) {
     setBusyId(inquiry.id);
     setError(undefined);
     try {
-      const result = await updateMyInquiry(inquiry.id, draftMessage);
+      const price = Number(draftPrice);
+      if (!draftPrice.trim() || !Number.isSafeInteger(price) || price < 0) {
+        setError({ id: inquiry.id, message: t('bookingPrice') });
+        return;
+      }
+      const result = await updateMyInquiry(inquiry.id, draftMessage, price, draftCurrency);
       if (!result.ok) {
         setError({ id: inquiry.id, message: result.error });
         return;
@@ -66,12 +73,38 @@ export function InquiryList({ inquiries }: { inquiries: UserInquiry[] }) {
               </span>
             </div>
             {isEditing ? (
-              <label className="inquiry-editor">
-                {t('inquiryMessage')}
-                <textarea value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} rows={5} minLength={10} maxLength={3000} />
-              </label>
+              <div className="form-grid">
+                <label>
+                  {t('bookingPrice')}
+                  <input
+                    type="number"
+                    min="0"
+                    max={Number.MAX_SAFE_INTEGER}
+                    step="1"
+                    required
+                    value={draftPrice}
+                    onChange={(event) => setDraftPrice(event.target.value)}
+                  />
+                </label>
+                <label>
+                  {t('bookingCurrency')}
+                  <select value={draftCurrency} onChange={(event) => setDraftCurrency(event.target.value as 'USD' | 'CDF')} required>
+                    <option value="USD">USD</option>
+                    <option value="CDF">CDF</option>
+                  </select>
+                </label>
+                <label className="form-wide inquiry-editor">
+                  {t('inquiryMessage')}
+                  <textarea value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} rows={5} minLength={10} maxLength={3000} />
+                </label>
+              </div>
             ) : (
-              <p className="inquiry-message">{inquiry.message}</p>
+              <>
+                {inquiry.price !== null && inquiry.currency && (
+                  <p className="inquiry-message"><strong>{t('bookingPrice')}:</strong> {inquiry.price.toLocaleString()} {inquiry.currency}</p>
+                )}
+                <p className="inquiry-message">{inquiry.message}</p>
+              </>
             )}
             {inquiry.status === 'pending' && (
               <div className="inquiry-actions">
@@ -86,7 +119,18 @@ export function InquiryList({ inquiries }: { inquiries: UserInquiry[] }) {
                   </>
                 ) : (
                   <>
-                    <button className="button button-outline" type="button" disabled={isBusy} onClick={() => { setEditingId(inquiry.id); setDraftMessage(inquiry.message); setError(undefined); }}>
+                    <button
+                      className="button button-outline"
+                      type="button"
+                      disabled={isBusy}
+                      onClick={() => {
+                        setEditingId(inquiry.id);
+                        setDraftMessage(inquiry.message);
+                        setDraftPrice(inquiry.price?.toString() ?? '');
+                        setDraftCurrency(inquiry.currency ?? 'USD');
+                        setError(undefined);
+                      }}
+                    >
                       {t('editInquiry')}
                     </button>
                     <button className="button button-danger" type="button" disabled={isBusy} onClick={() => void remove(inquiry)}>
