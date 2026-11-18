@@ -20,6 +20,15 @@
     "date": {
       "type": "date"
     },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "confirmed",
+        "declined"
+      ],
+      "default": "pending"
+    },
     "property": {
       "type": "relation",
       "relation": "manyToOne",
