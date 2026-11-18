@@ -144,12 +144,17 @@
     "industrial": "工业",
     "other": "其他",
     "priceOnRequest": "价格面议",
-    "enquire": "咨询此房产",
+    "reserve": "预订此房产",
+    "reservationUnavailable": "此房产暂不可预订。",
     "description": "房产详情",
     "specifications": "规格",
     "similar": "您可能也喜欢",
     "notFound": "该房产暂不可用或无法找到。",
-    "availability": "可用状态"
+    "availability": "可用状态",
+    "available": "可预订",
+    "reserved": "已预订",
+    "rented": "已出租",
+    "sold": "已售出"
   },
   "contact": {
     "name": "姓名",
@@ -166,7 +171,7 @@
     "phoneHint": "请填写国家区号。",
     "company": "Congo Builders",
     "address": "刚果民主共和国上加丹加省卢本巴希",
-    "emailAddress": "infos@congo-btp.com",
+    "emailAddress": "info@congobuilders.com",
     "phoneOne": "+243 89-553-1458",
     "phoneTwo": "+243 82-292-2372",
     "website": "www.congo-btp.com"
@@ -180,6 +185,7 @@
     "email": "电子邮箱",
     "identifier": "邮箱或用户名",
     "password": "密码",
+    "bookingSignInPrompt": "登录或创建客户账户以申请此房产并跟踪处理状态。",
     "login": "登录",
     "register": "创建账户",
     "submitting": "请稍候…",
@@ -191,7 +197,18 @@
     "noInquiries": "您尚未提交房产咨询。",
     "inquiriesFailure": "暂时无法加载您的咨询，请稍后重试。",
     "inquiry": "咨询",
-    "propertyUnavailable": "房产详情不可用"
+    "propertyUnavailable": "房产详情不可用",
+    "status": "状态",
+    "statusPending": "待处理",
+    "statusConfirmed": "已确认",
+    "statusDeclined": "已拒绝",
+    "inquiryMessage": "申请留言",
+    "editInquiry": "编辑申请",
+    "saveInquiry": "保存更改",
+    "cancel": "取消",
+    "deleteInquiry": "删除申请",
+    "confirmDeleteInquiry": "确定删除这条待处理的房产申请吗？",
+    "inquiryActionFailure": "无法更新此申请，请重试。"
   },
   "footer": {
     "tagline": "建造与创新。",

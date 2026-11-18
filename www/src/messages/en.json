@@ -144,12 +144,17 @@
     "industrial": "Industrial",
     "other": "Other",
     "priceOnRequest": "Price on request",
-    "enquire": "Enquire about this property",
+    "reserve": "Reserve this property",
+    "reservationUnavailable": "This property is not available for reservation.",
     "description": "Property details",
     "specifications": "Specifications",
     "similar": "You may also like",
     "notFound": "This property is not available or could not be found.",
-    "availability": "Availability"
+    "availability": "Availability",
+    "available": "Available",
+    "reserved": "Reserved",
+    "rented": "Rented",
+    "sold": "Sold"
   },
   "contact": {
     "name": "Full name",
@@ -166,7 +171,7 @@
     "phoneHint": "Include your country code.",
     "company": "Congo Builders",
     "address": "Lubumbashi, Haut-Katanga, Democratic Republic of Congo",
-    "emailAddress": "infos@congo-btp.com",
+    "emailAddress": "info@congobuilders.com",
     "phoneOne": "+243 89-553-1458",
     "phoneTwo": "+243 82-292-2372",
     "website": "www.congo-btp.com"
@@ -180,6 +185,7 @@
     "email": "Email address",
     "identifier": "Email or username",
     "password": "Password",
+    "bookingSignInPrompt": "Sign in or create a customer account to request this property and track its status.",
     "login": "Sign in",
     "register": "Create account",
     "submitting": "Please wait…",
@@ -191,7 +197,18 @@
     "noInquiries": "You have not sent any property inquiries yet.",
     "inquiriesFailure": "Your inquiries are temporarily unavailable. Please try again later.",
     "inquiry": "Inquiry",
-    "propertyUnavailable": "Property details unavailable"
+    "propertyUnavailable": "Property details unavailable",
+    "status": "Status",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed",
+    "statusDeclined": "Declined",
+    "inquiryMessage": "Request message",
+    "editInquiry": "Edit request",
+    "saveInquiry": "Save changes",
+    "cancel": "Cancel",
+    "deleteInquiry": "Delete request",
+    "confirmDeleteInquiry": "Delete this pending property request?",
+    "inquiryActionFailure": "We could not update this request. Please try again."
   },
   "footer": {
     "tagline": "Building & innovation.",

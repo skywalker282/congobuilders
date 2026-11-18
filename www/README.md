@@ -16,14 +16,24 @@ properties and testimonials are fetched server-side. If the service or project
 collections are unavailable, the site uses the documented static service list and
 illustrative project references; property inventory is never fabricated.
 
-## Enquiry delivery
+## Contact email and property inquiries
 
-Contact and property enquiry forms validate submissions on the server and forward
-them to Strapi. Set `STRAPI_INQUIRY_API_TOKEN` to a restricted server-side token
-with only the `inquiry.create` and `inquiry.find` permissions. The token is used
-only by server routes and is never exposed to the browser. `STRAPI_API_TOKEN` is
-optional and is intended only for other server-side collection requests that
-require authentication.
+The public contact form sends two emails through Resend: the visitor receives a
+confirmation and the admin receives the message (with reply-to set to the
+visitor). Configure `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` (a verified Resend
+sender), and `CONTACT_ADMIN_EMAIL`.
+
+Property requests are customer inquiries, not contact messages. Visitors must
+register or sign in before submitting one. The Strapi `POST /api/me/inquiries`
+handler attaches each inquiry to the authenticated user and starts it with a
+`pending` status. `GET /api/me/inquiries` returns only that user's inquiries.
+Enable the `inquiry.createMine` and `inquiry.findMine` actions for the
+Authenticated role in Strapi's Users & Permissions settings. The inquiry
+content type also needs its status field applied when deploying the updated
+Strapi schema.
+
+`STRAPI_API_TOKEN` is optional and is intended only for server-side collection
+requests that require authentication.
 
 ## Accounts
 
@@ -31,20 +41,20 @@ Visitors can register or sign in from the site navigation. Strapi issues the
 session token, which the Next.js server stores in an HTTP-only cookie. Signed-in
 users can review inquiries related to their own Strapi account at
 `/en/account/inquiries` (or the equivalent localized path).
-Inquiry history is read through the authenticated `/api/users/me` relation rather
-than by exposing the inquiries collection to the browser.
-On the current remote instance, the Authenticated role must also have
-`inquiry.find` enabled for that relation to resolve. This permits authenticated
-users to query the inquiries collection directly, so it is not a
-privacy-hardened production configuration; use a server-side owner-scoped
-endpoint before production.
-
-The current remote Strapi API rejects writes to the `customer` relation on
-`/api/inquiries` (`Invalid key customer`). Authenticated inquiry submissions
-therefore return an explicit error instead of being saved as unowned records.
-Enabling account-linked submissions requires a server-side Strapi endpoint that
-sets `customer` from the authenticated user; the `core/` content-type files are
-intentionally left unchanged.
+Inquiry history is read through the authenticated, owner-scoped
+`/api/me/inquiries` endpoint; the customer relation is never accepted from the
+browser.
+Customers can edit or delete only their own pending requests from the account
+page. These operations use Strapi 5's `PUT /api/inquiries/:documentId` with a
+`{ data: { message } }` body and `DELETE /api/inquiries/:documentId` without a
+body. Set `STRAPI_INQUIRY_API_TOKEN` to a server-only API token restricted to
+`inquiry.update` and `inquiry.delete`; do not grant these collection-wide
+permissions to the Authenticated role.
+The browser posts credentials to the same-origin `/api/auth/login` route; the
+Next.js server forwards them to `${STRAPI_API_URL}/api/auth/local`. Set
+`STRAPI_API_URL` to the absolute Strapi base URL (for example,
+`https://buildersapi.salemcapital.cd`). `NEXT_PUBLIC_SITE_URL` is the website's
+public URL and must not be used as the Strapi API URL.
 
 ## Production
 

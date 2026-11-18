@@ -4,8 +4,6 @@ import { z } from 'zod';
 import { authCookieName, getAuthenticatedUser } from '@/lib/strapi-auth';
 
 const schema = z.object({
-  name: z.string().trim().min(2).max(120),
-  email: z.string().trim().email().max(254),
   phone: z.string().trim().min(6).max(40),
   message: z.string().trim().min(10).max(3000),
   property: z.string().trim().min(1).max(128),
@@ -13,46 +11,45 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
-  const result = schema.safeParse(await request.json().catch(() => null));
-  if (!result.success) {
+  const data = schema.safeParse(await request.json().catch(() => null));
+  if (!data.success) {
     return NextResponse.json({ error: 'Please check the form fields and try again.' }, { status: 400 });
   }
-  if (result.data.website) return NextResponse.json({ ok: true });
+  if (data.data.website) return NextResponse.json({ ok: true });
 
   const apiUrl = (process.env.STRAPI_API_URL || 'https://buildersapi.salemcapital.cd').replace(/\/+$/, '');
   const sessionToken = (await cookies()).get(authCookieName)?.value;
-  const identity = sessionToken ? await getAuthenticatedUser(sessionToken) : undefined;
-  if (identity && !identity.ok) {
-    return NextResponse.json({ error: identity.status === 401 ? 'Please sign in again before sending an inquiry.' : 'The enquiry service is temporarily unavailable.' }, { status: identity.status });
+  if (!sessionToken) {
+    return NextResponse.json({ error: 'Sign in or create an account to request this property.' }, { status: 401 });
   }
 
-  const token = process.env.STRAPI_INQUIRY_API_TOKEN || process.env.STRAPI_API_TOKEN || (identity?.ok ? sessionToken : undefined);
-  if (!token) {
-    return NextResponse.json({ error: 'The enquiry service is not configured. Please contact us by phone or email.' }, { status: 503 });
+  const identity = await getAuthenticatedUser(sessionToken);
+  if (!identity.ok) {
+    return NextResponse.json(
+      { error: identity.status === 401 ? 'Please sign in again before sending an inquiry.' : 'The enquiry service is temporarily unavailable.' },
+      { status: identity.status },
+    );
   }
 
   const message = [
-    `Property ID: ${result.data.property}`,
-    `Name: ${result.data.name}`,
-    `Email: ${result.data.email}`,
-    `Phone: ${result.data.phone}`,
+    `Name: ${identity.user.username}`,
+    `Email: ${identity.user.email}`,
+    `Phone: ${data.data.phone}`,
     '',
-    result.data.message,
+    data.data.message,
   ].join('\n');
-
-  const inquiryData: Record<string, unknown> = {
-    message,
-    property: result.data.property,
-    date: new Date().toISOString().slice(0, 10),
-  };
-  if (identity?.ok) inquiryData.customer = identity.user.id;
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${apiUrl}/api/inquiries`, {
+    upstream = await fetch(`${apiUrl}/api/me/inquiries`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: inquiryData }),
+      headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        data: {
+          message,
+          property: data.data.property,
+        },
+      }),
       cache: 'no-store',
     });
   } catch (error) {
@@ -62,12 +59,8 @@ export async function POST(request: Request) {
 
   if (!upstream.ok) {
     console.error(`Strapi property enquiry failed: ${upstream.status} ${upstream.statusText}`);
-    const body = await upstream.text().catch((error: unknown) => {
-      console.error('Unable to read the Strapi property enquiry error response.', error);
-      return '';
-    });
-    if (identity?.ok && body.includes('Invalid key customer')) {
-      return NextResponse.json({ error: 'The remote inquiry API cannot link this request to your account yet. Please contact us by phone or email.' }, { status: 503 });
+    if (upstream.status === 409) {
+      return NextResponse.json({ error: 'This property is no longer available for reservation.' }, { status: 409 });
     }
     return NextResponse.json({ error: 'We could not send your message. Please contact us by phone or email.' }, { status: 502 });
   }

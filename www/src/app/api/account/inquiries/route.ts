@@ -14,7 +14,7 @@ export async function GET() {
     );
   }
 
-  const result = await getMyInquiries(token, identity.user);
+  const result = await getMyInquiries(token);
   if (!result.ok) {
     return NextResponse.json(
       { error: result.status === 401 ? 'Your session has expired.' : 'Your inquiries are temporarily unavailable.' },

@@ -270,6 +270,7 @@ button { cursor: pointer; }
 .form-section-heading { margin-bottom: 26px; }
 .form-section-heading h2 { max-width: 600px; margin-top: 9px; font-size: 32px; }
 .related-heading { margin: 0 0 23px; font-size: 30px; }
+.button-row { display: flex; flex-wrap: wrap; gap: 12px; }
 .contact-form { width: 100%; }
 .form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 19px; }
 .form-wide { grid-column: 1 / -1; }
@@ -298,9 +299,18 @@ button { cursor: pointer; }
 .account-empty { padding: 24px; border: 1px solid var(--line); background: var(--white); color: var(--muted); }
 .inquiry-list { display: grid; gap: 14px; }
 .inquiry-card { padding: 22px; border: 1px solid var(--line); background: var(--white); }
-.inquiry-card h2 { margin: 8px 0 12px; color: var(--blue); font-size: 20px; }
-.inquiry-card p { color: var(--muted); font-size: 13px; white-space: pre-wrap; }
-
+.inquiry-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.inquiry-card-header h2 { margin: 8px 0 0; color: var(--blue); font-size: 19px; }
+.inquiry-status-badge { flex: 0 0 auto; padding: 6px 10px; border-radius: 999px; color: var(--blue); background: #edf2f5; font-size: 11px; font-weight: 700; }
+.inquiry-status-confirmed { color: #17613e; background: #e9f4ed; }
+.inquiry-status-declined { color: #8a302d; background: #f9eae9; }
+.inquiry-message { margin: 18px 0; color: var(--muted); font-size: 13px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.inquiry-editor { display: grid; gap: 8px; margin: 18px 0; color: var(--muted); font-size: 12px; font-weight: 700; }
+.inquiry-editor textarea { width: 100%; padding: 12px; border: 1px solid var(--line); background: var(--white); color: var(--text); font: inherit; font-weight: 400; resize: vertical; }
+.inquiry-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.inquiry-actions .button { min-height: 42px; }
+.button-danger { color: #8a302d; border-color: #e6c6c4; background: #fff; }
+.button-danger:hover { color: #fff; border-color: #8a302d; background: #8a302d; }
 @media (min-width: 1600px) {
   .hero-content { width: min(1400px,calc(100% - 112px)); }
 }
@@ -416,6 +426,7 @@ button { cursor: pointer; }
   .contact-form-wrap { padding: 17px; }
   .auth-panel { padding: 17px; }
   .account-toolbar { align-items: flex-start; flex-direction: column; }
+  .inquiry-card-header { flex-direction: column; }
 }
 @media (max-width: 390px) {
   .brand-logo { width: 76px; }

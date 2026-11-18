@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
-export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
+export function AuthForm({ mode, returnTo }: { mode: 'login' | 'register'; returnTo?: string }) {
   const t = useTranslations('auth');
   const locale = useLocale();
   const router = useRouter();
@@ -28,7 +28,10 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
         setError(typeof payload.error === 'string' ? payload.error : t('failure'));
         return;
       }
-      router.replace(`/${locale}/account/inquiries`);
+      const destination = returnTo && returnTo.startsWith(`/${locale}/`) && !returnTo.includes('\\')
+        ? returnTo
+        : `/${locale}/account/inquiries`;
+      router.replace(destination);
       router.refresh();
     } catch (submissionError) {
       console.error('Unable to submit the account form.', submissionError);

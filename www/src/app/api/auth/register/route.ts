@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { authCookieName } from '@/lib/strapi-auth';
+import { authCookieName, getStrapiApiUrl } from '@/lib/strapi-auth';
 
 const schema = z.object({
   username: z.string().trim().min(3).max(50).regex(/^[a-zA-Z0-9._-]+$/),
@@ -14,7 +14,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Enter a valid username, email address, and password (at least 8 characters).' }, { status: 400 });
   }
 
-  const apiUrl = (process.env.STRAPI_API_URL || 'https://buildersapi.salemcapital.cd').replace(/\/+$/, '');
+  const apiUrl = getStrapiApiUrl();
+  if (!apiUrl) {
+    console.error('Registration is unavailable because STRAPI_API_URL is not an absolute HTTP(S) URL.');
+    return NextResponse.json({ error: 'Registration is temporarily unavailable.' }, { status: 503 });
+  }
+
   let upstream: Response;
   try {
     upstream = await fetch(`${apiUrl}/api/auth/local/register`, {

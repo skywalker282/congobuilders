@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { LogoutButton } from '@/components/logout-button';
 import { PageIntro } from '@/components/site';
 import { getAuthenticatedUser, getMyInquiries, getSessionToken } from '@/lib/strapi-auth';
+import { InquiryList } from './inquiry-list';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,7 @@ export default async function AccountInquiriesPage({ params }: { params: Promise
   if (!identity.ok && identity.status === 401) redirect(`/${locale}/login`);
 
   const result = identity.ok
-    ? await getMyInquiries(token, identity.user)
+    ? await getMyInquiries(token)
     : { ok: false as const, status: identity.status };
 
   return (
@@ -36,14 +37,7 @@ export default async function AccountInquiriesPage({ params }: { params: Promise
           ) : result.inquiries.length === 0 ? (
             <p className="account-empty">{t('noInquiries')}</p>
           ) : (
-            <div className="inquiry-list">
-              {result.inquiries.map((inquiry) => (
-                <article className="inquiry-card" key={inquiry.id}>
-                  <div><span className="eyebrow">{inquiry.date || t('inquiry')}</span><h2>{inquiry.property || t('propertyUnavailable')}</h2></div>
-                  <p>{inquiry.message}</p>
-                </article>
-              ))}
-            </div>
+            <InquiryList inquiries={result.inquiries} />
           )}
         </div>
       </section>

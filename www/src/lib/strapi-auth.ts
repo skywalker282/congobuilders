@@ -1,8 +1,21 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 
-const apiUrl = (process.env.STRAPI_API_URL || 'https://buildersapi.salemcapital.cd').replace(/\/+$/, '');
+const defaultApiUrl = 'https://buildersapi.salemcapital.cd';
 export const authCookieName = 'congo-builders-session';
+
+export function getStrapiApiUrl(): string | undefined {
+  const configuredUrl = process.env.STRAPI_API_URL?.trim() || defaultApiUrl;
+  try {
+    const url = new URL(configuredUrl);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) {
+      return undefined;
+    }
+    return url.toString().replace(/\/+$/, '');
+  } catch {
+    return undefined;
+  }
+}
 
 export type AuthUser = {
   id: number;
@@ -16,6 +29,7 @@ export type UserInquiry = {
   date: string;
   message: string;
   property: string;
+  status: string;
 };
 
 type StrapiRecord = Record<string, unknown> & {
@@ -36,6 +50,12 @@ export async function getAuthenticatedUser(token: string): Promise<
   | { ok: true; user: AuthUser }
   | { ok: false; status: number }
 > {
+  const apiUrl = getStrapiApiUrl();
+  if (!apiUrl) {
+    console.error('STRAPI_API_URL must be an absolute HTTP(S) URL.');
+    return { ok: false, status: 502 };
+  }
+
   let response: Response;
   try {
     response = await fetch(`${apiUrl}/api/users/me`, {
@@ -85,16 +105,19 @@ export async function getAuthenticatedUser(token: string): Promise<
   };
 }
 
-export async function getMyInquiries(token: string, user: AuthUser): Promise<
+export async function getMyInquiries(token: string): Promise<
   | { ok: true; inquiries: UserInquiry[] }
   | { ok: false; status: number }
 > {
-  const params = new URLSearchParams({
-    'populate[inquiries][populate][property]': 'true',
-  });
+  const apiUrl = getStrapiApiUrl();
+  if (!apiUrl) {
+    console.error('STRAPI_API_URL must be an absolute HTTP(S) URL.');
+    return { ok: false, status: 502 };
+  }
+
   let response: Response;
   try {
-    response = await fetch(`${apiUrl}/api/users/me?${params}`, {
+    response = await fetch(`${apiUrl}/api/me/inquiries`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: 'no-store',
     });
@@ -121,25 +144,14 @@ export async function getMyInquiries(token: string, user: AuthUser): Promise<
     return { ok: false, status: 502 };
   }
 
-  const currentUser = 'data' in payload && payload.data && typeof payload.data === 'object'
-    ? payload.data as Record<string, unknown>
-    : payload as Record<string, unknown>;
-  if (!('id' in currentUser) || String(currentUser.id) !== String(user.id)) {
-    console.error('Strapi returned inquiry data for a different user session.');
-    return { ok: false, status: 502 };
-  }
-  if (!('inquiries' in currentUser)) {
-    console.error('Strapi omitted the current user inquiries relation.');
-    return { ok: false, status: 502 };
-  }
-
-  const relation = currentUser.inquiries;
   const relationData =
-    relation && typeof relation === 'object' && 'data' in relation
-      ? relation.data
-      : relation;
+    'data' in payload && payload.data && typeof payload.data === 'object' && 'data' in payload.data
+      ? payload.data.data
+      : 'data' in payload
+        ? payload.data
+        : undefined;
   if (!Array.isArray(relationData)) {
-    console.error('Strapi returned an unexpected current user inquiries relation.');
+    console.error('Strapi returned an unexpected current user inquiry list.');
     return { ok: false, status: 502 };
   }
 
@@ -147,7 +159,6 @@ export async function getMyInquiries(token: string, user: AuthUser): Promise<
   for (const item of relationData) {
     if (!item || typeof item !== 'object') continue;
     const record = recordFields(item as StrapiRecord);
-    if ('publishedAt' in record && record.publishedAt === null) continue;
     const propertyValue = record.property;
     const propertyRecord =
       propertyValue && typeof propertyValue === 'object'
@@ -165,6 +176,7 @@ export async function getMyInquiries(token: string, user: AuthUser): Promise<
       date: typeof record.date === 'string' ? record.date : '',
       message: typeof record.message === 'string' ? record.message : '',
       property: typeof property.name === 'string' ? property.name : '',
+      status: typeof record.status === 'string' ? record.status : 'pending',
     });
   }
 

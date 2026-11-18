@@ -858,7 +858,7 @@ Location: Lubumbashi, Haut-Katanga,
 Phone: +243 89-553-1458
 Phone: +243 82-292-2372
 
-Email: infos@congo-btp.com
+Email: info@congobuilders.com
 Website: www.congo-btp.com
 ```
 
@@ -1565,7 +1565,7 @@ The following information is available:
 **Location:** Lubumbashi, Haut-Katanga, Democratic Republic of Congo  
 **Phone:** +243 89-553-1458  
 **Phone:** +243 82-292-2372  
-**Email:** infos@congo-btp.com  
+**Email:** info@congobuilders.com  
 **Website:** www.congo-btp.com
 
 The profile describes the company's commitment to quality, deadlines, careful finishing, qualified technical personnel, controlled materials and project delivery.

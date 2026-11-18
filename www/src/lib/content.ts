@@ -249,9 +249,10 @@ export async function getProjects(): Promise<Project[]> {
   return projects.length ? projects : fallbackProjects;
 }
 
-export async function getProperties(): Promise<Property[]> {
+export async function getProperties({ includeUnavailable = false }: { includeUnavailable?: boolean } = {}): Promise<Property[]> {
+  const availabilityFilter = includeUnavailable ? '' : 'filters[availability][$eq]=AVAILABLE&';
   const records = await getCollection(
-    'properties?filters[availability][$eq]=AVAILABLE&populate=*&pagination[pageSize]=100',
+    `properties?${availabilityFilter}populate=*&pagination[pageSize]=100`,
     'properties',
   );
 
@@ -260,7 +261,7 @@ export async function getProperties(): Promise<Property[]> {
     const title = text(data.name ?? data.title);
     const transaction = text(data.transaction).toUpperCase();
     const availability = text(data.availability).toUpperCase();
-    if (!title || !['RENT', 'SALE'].includes(transaction) || availability !== 'AVAILABLE') {
+    if (!title || !['RENT', 'SALE'].includes(transaction) || (!includeUnavailable && availability !== 'AVAILABLE')) {
       return [];
     }
 
@@ -290,7 +291,7 @@ export async function getProperties(): Promise<Property[]> {
 }
 
 export async function getProperty(slug: string): Promise<Property | undefined> {
-  const properties = await getProperties();
+  const properties = await getProperties({ includeUnavailable: true });
   return properties.find((property) => property.slug === slug);
 }
 

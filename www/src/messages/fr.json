@@ -144,12 +144,17 @@
     "industrial": "Industriel",
     "other": "Autre",
     "priceOnRequest": "Prix sur demande",
-    "enquire": "Demander des informations",
+    "reserve": "Réserver",
+    "reservationUnavailable": "Ce bien n’est pas disponible à la réservation.",
     "description": "Détails du bien",
     "specifications": "Caractéristiques",
     "similar": "Biens similaires",
     "notFound": "Ce bien est indisponible ou introuvable.",
-    "availability": "Disponibilité"
+    "availability": "Disponibilité",
+    "available": "Libre",
+    "reserved": "Réservé",
+    "rented": "Loué",
+    "sold": "Vendu"
   },
   "contact": {
     "name": "Nom complet",
@@ -166,7 +171,7 @@
     "phoneHint": "Indiquez l'indicatif du pays.",
     "company": "Congo Builders",
     "address": "Lubumbashi, Haut-Katanga, République démocratique du Congo",
-    "emailAddress": "infos@congo-btp.com",
+    "emailAddress": "info@congobuilders.com",
     "phoneOne": "+243 89-553-1458",
     "phoneTwo": "+243 82-292-2372",
     "website": "www.congo-btp.com"
@@ -180,6 +185,7 @@
     "email": "Adresse e-mail",
     "identifier": "E-mail ou nom d’utilisateur",
     "password": "Mot de passe",
+    "bookingSignInPrompt": "Connectez-vous ou créez un compte client pour demander ce bien et suivre son statut.",
     "login": "Se connecter",
     "register": "Créer un compte",
     "submitting": "Veuillez patienter…",
@@ -191,7 +197,18 @@
     "noInquiries": "Vous n’avez pas encore envoyé de demande immobilière.",
     "inquiriesFailure": "Vos demandes sont temporairement indisponibles. Veuillez réessayer plus tard.",
     "inquiry": "Demande",
-    "propertyUnavailable": "Détails du bien indisponibles"
+    "propertyUnavailable": "Détails du bien indisponibles",
+    "status": "Statut",
+    "statusPending": "En attente",
+    "statusConfirmed": "Confirmée",
+    "statusDeclined": "Refusée",
+    "inquiryMessage": "Message de la demande",
+    "editInquiry": "Modifier la demande",
+    "saveInquiry": "Enregistrer",
+    "cancel": "Annuler",
+    "deleteInquiry": "Supprimer la demande",
+    "confirmDeleteInquiry": "Supprimer cette demande immobilière en attente ?",
+    "inquiryActionFailure": "Impossible de modifier cette demande. Veuillez réessayer."
   },
   "footer": {
     "tagline": "Construire & innover.",
