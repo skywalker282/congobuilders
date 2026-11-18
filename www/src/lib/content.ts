@@ -155,17 +155,24 @@ function text(value: unknown): string {
   return '';
 }
 
+function strapiMediaUrl(url: string): string {
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith('//')) return `${apiBase.startsWith('http://') ? 'http:' : 'https:'}${trimmed}`;
+  return `${apiBase}/${trimmed.replace(/^\/+/, '')}`;
+}
+
 function mediaUrl(value: unknown): string | undefined {
   const first = Array.isArray(value) ? value[0] : value;
   if (!first || typeof first !== 'object') return undefined;
   const media = first as { url?: unknown; data?: unknown };
-  if (typeof media.url === 'string') return media.url;
+  if (typeof media.url === 'string') return strapiMediaUrl(media.url);
   const nested = Array.isArray(media.data) ? media.data[0] : media.data;
   if (!nested || typeof nested !== 'object') return undefined;
   const item = nested as { url?: unknown; attributes?: { url?: unknown } };
   const url = item.url ?? item.attributes?.url;
   if (typeof url !== 'string') return undefined;
-  return url.startsWith('/') ? `${apiBase}${url}` : url;
+  return strapiMediaUrl(url);
 }
 
 function slugify(value: string): string {
