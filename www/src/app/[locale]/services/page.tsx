@@ -4,7 +4,7 @@ import { PageIntro, ServiceGrid } from '@/components/site';
 import { getServices } from '@/lib/content';
 import { localeAlternates } from '@/lib/seo';
 
-export const revalidate = 300;
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;

@@ -20,7 +20,7 @@
     "date": {
       "type": "date"
     },
-    "status": {
+    "progress": {
       "type": "enumeration",
       "enum": [
         "pending",

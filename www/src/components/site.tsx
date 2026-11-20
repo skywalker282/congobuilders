@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Star } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
-import type { Project, Property, Service, Testimonial } from '@/lib/content';
+import type { Member, Project, Property, Service, Testimonial } from '@/lib/content';
 
 export async function Footer() {
   const [t, n, c, locale] = await Promise.all([
@@ -68,7 +68,7 @@ export async function ProjectGrid({ projects, limit }: { projects: Project[]; li
   return <div className="project-grid">{items.map((project, index) =>
     <article className={`project-card${index === 0 ? ' project-card-featured' : ''}`} key={project.id}>
       <Link className="project-image-link" href={`/${locale}/projects/${project.slug}`}>
-        <Image src={project.image} alt={project.title} fill sizes={index === 0 ? '(max-width: 700px) 100vw, 66vw' : '(max-width: 700px) 100vw, 33vw'} className="cover-image" />
+        {project.image ? <Image src={project.image} alt={project.title} fill sizes={index === 0 ? '(max-width: 700px) 100vw, 66vw' : '(max-width: 700px) 100vw, 33vw'} className="cover-image" /> : <span className="property-image-placeholder" aria-hidden="true">CB</span>}
         <span className="project-status">{t.has(project.status.toLowerCase()) ? t(project.status.toLowerCase()) : project.status}</span>
       </Link>
       <div className="project-card-copy"><span className="eyebrow">{project.category.replaceAll('_', ' ')}</span><h3><Link href={`/${locale}/projects/${project.slug}`}>{project.title}</Link></h3>{project.location && <p>{project.location}</p>}<Link className="text-link" href={`/${locale}/projects/${project.slug}`}>{t('explore')} <ArrowRight size={16} /></Link></div>
@@ -88,10 +88,42 @@ export async function ProjectFilters({ categories, category = '', status = '' }:
 export function TestimonialList({ testimonials }: { testimonials: Testimonial[] }) {
   return <div className="testimonial-grid">{testimonials.map((testimonial, index) =>
     <figure className="testimonial-item" key={testimonial.id}>
-      <span className="testimonial-number">0{index + 1}</span>
+      <div className="testimonial-meta">
+        <span className="testimonial-number">0{index + 1}</span>
+        {testimonial.stars != null && <div className="testimonial-rating" aria-label={`${testimonial.stars} sur 5 étoiles`}>
+          {Array.from({ length: 5 }, (_, starIndex) =>
+            <Star
+              key={starIndex}
+              size={14}
+              fill={starIndex < testimonial.stars! ? 'currentColor' : 'none'}
+              aria-hidden="true"
+            />,
+          )}
+        </div>}
+      </div>
       <blockquote>{testimonial.content}</blockquote>
-      <figcaption><strong>{testimonial.customer}</strong>{testimonial.title && <span>{testimonial.title}</span>}</figcaption>
+      <figcaption>
+        <span className="testimonial-avatar" aria-hidden="true">{testimonial.customer.charAt(0).toUpperCase()}</span>
+        <span className="testimonial-person"><strong>{testimonial.customer}</strong>{testimonial.title && <small>{testimonial.title}</small>}</span>
+      </figcaption>
     </figure>,
+  )}</div>;
+}
+
+export function MemberGrid({ members }: { members: Member[] }) {
+  return <div className="member-grid">{members.map((member, index) =>
+    <article className="member-card" key={member.id}>
+      <div className="member-profile">
+        {member.profile
+          ? <Image src={member.profile} alt={member.name} fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 33vw, 25vw" className="cover-image" />
+          : <span className="member-profile-placeholder" aria-hidden="true">{member.name.charAt(0).toUpperCase()}</span>}
+        <span className="member-index">0{index + 1}</span>
+      </div>
+      <div className="member-card-copy">
+        <h3>{member.name}</h3>
+        {member.title && <p>{member.title}</p>}
+      </div>
+    </article>,
   )}</div>;
 }
 

@@ -471,10 +471,12 @@ export interface ApiInquiryInquiry extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     message: Schema.Attribute.Text;
     price: Schema.Attribute.Integer;
+    progress: Schema.Attribute.Enumeration<
+      ['pending', 'confirmed', 'declined']
+    > &
+      Schema.Attribute.DefaultTo<'pending'>;
     property: Schema.Attribute.Relation<'manyToOne', 'api::property.property'>;
     publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['pending', 'confirmed', 'declined']> &
-      Schema.Attribute.DefaultTo<'pending'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

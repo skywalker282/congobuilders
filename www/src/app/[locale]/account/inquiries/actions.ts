@@ -27,7 +27,7 @@ async function getPendingInquiryAccess(id: string): Promise<InquiryAccess> {
   }
 
   const inquiry = result.inquiries.find((item) => item.id === inquiryId);
-  if (!inquiry || inquiry.status !== 'pending') {
+  if (!inquiry || inquiry.progress !== 'pending') {
     return { ok: false, error: 'Only your pending inquiries can be changed.' };
   }
 

@@ -9,6 +9,7 @@ const schema = z.object({
   message: z.string().trim().min(10).max(maxMessageLength),
   property: z.string().trim().min(1).max(128),
   customer: z.coerce.number().int().positive().optional(),
+  progress: z.enum(['pending']).optional().default('pending'),
   price: z.string().regex(/^\d+$/).transform(Number).pipe(z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER)),
   currency: z.enum(['USD', 'CDF']),
   website: z.string().max(0).optional(),

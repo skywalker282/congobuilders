@@ -136,11 +136,17 @@ button { cursor: pointer; }
 .project-filters select { min-height: 44px; padding: 9px 11px; border: 1px solid #cbd4da; color: var(--text); background: var(--white); font-size: 12px; }
 .project-filters .button { min-height: 44px; }
 .testimonial-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
-.testimonial-item { min-height: 230px; margin: 0; padding: 27px; display: flex; flex-direction: column; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.62); }
+.testimonial-item { position: relative; min-height: 270px; margin: 0; padding: 27px; display: flex; flex-direction: column; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.62); }
+.testimonial-meta { display: flex; align-items: center; justify-content: space-between; }
 .testimonial-number { color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
-.testimonial-item blockquote { flex: 1; margin: 25px 0; color: var(--blue); font-size: 16px; font-weight: 600; line-height: 1.65; }
-.testimonial-item figcaption { display: grid; gap: 3px; color: var(--blue); font-size: 12px; }
-.testimonial-item figcaption span { color: var(--muted); font-size: 10px; }
+.testimonial-rating { display: flex; gap: 3px; color: #c8a91a; }
+.testimonial-item blockquote { flex: 1; position: relative; margin: 30px 0 24px; padding-top: 30px; color: var(--blue); font-size: 16px; font-weight: 600; line-height: 1.65; }
+.testimonial-item blockquote::before { position: absolute; top: -5px; left: 0; color: var(--gold); content: "\201C"; font-family: Georgia, serif; font-size: 58px; line-height: 1; }
+.testimonial-item figcaption { display: flex; align-items: center; gap: 11px; color: var(--blue); font-size: 12px; }
+.testimonial-avatar { width: 38px; height: 38px; flex: 0 0 38px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--white); background: var(--blue); font-size: 12px; font-weight: 800; }
+.testimonial-person { display: grid; gap: 3px; }
+.testimonial-person strong { font-size: 12px; }
+.testimonial-person small { color: var(--muted); font-size: 10px; }
 
 .property-feature { position: relative; padding-block: 106px; }
 .property-feature-copy { max-width: 625px; }
@@ -213,6 +219,17 @@ button { cursor: pointer; }
 .principle-grid article > span { color: var(--gold); font-size: 11px; font-weight: 800; letter-spacing: .1em; }
 .principle-grid h3 { margin: 26px 0 7px; color: var(--blue); font-size: 19px; }
 .principle-grid p { margin: 0; color: var(--muted); font-size: 12px; }
+
+.team-section { background: var(--white); }
+.member-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 18px; }
+.member-card { min-width: 0; border: 1px solid var(--line); background: var(--section-paper); }
+.member-profile { position: relative; height: 310px; overflow: hidden; background: #dce4e8; }
+.member-profile .cover-image { object-position: center top; }
+.member-profile-placeholder { width: 100%; height: 100%; display: grid; place-items: center; color: rgba(255,255,255,.9); background: linear-gradient(145deg,#20394a,#0d1f2b); font-family: Georgia,serif; font-size: 72px; }
+.member-index { position: absolute; right: 14px; bottom: 14px; min-width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--white); background: var(--blue); font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+.member-card-copy { min-height: 88px; padding: 18px 20px 20px; border-top: 1px solid var(--line); }
+.member-card-copy h3 { margin: 0 0 5px; color: var(--blue); font-size: 18px; }
+.member-card-copy p { margin: 0; color: var(--gold-dark); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
 
 .property-filter { margin: 0 0 25px; padding: 22px; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); align-items: end; gap: 16px; border: 1px solid var(--line); background: var(--white); }
 .property-filter label, .contact-form label { display: grid; gap: 7px; color: var(--blue); font-size: 10px; font-weight: 800; letter-spacing: .035em; }
@@ -301,9 +318,9 @@ button { cursor: pointer; }
 .inquiry-card { padding: 22px; border: 1px solid var(--line); background: var(--white); }
 .inquiry-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .inquiry-card-header h2 { margin: 8px 0 0; color: var(--blue); font-size: 19px; }
-.inquiry-status-badge { flex: 0 0 auto; padding: 6px 10px; border-radius: 999px; color: var(--blue); background: #edf2f5; font-size: 11px; font-weight: 700; }
-.inquiry-status-confirmed { color: #17613e; background: #e9f4ed; }
-.inquiry-status-declined { color: #8a302d; background: #f9eae9; }
+.inquiry-progress-badge { flex: 0 0 auto; padding: 6px 10px; border-radius: 999px; color: var(--blue); background: #edf2f5; font-size: 11px; font-weight: 700; }
+.inquiry-progress-confirmed { color: #17613e; background: #e9f4ed; }
+.inquiry-progress-declined { color: #8a302d; background: #f9eae9; }
 .inquiry-message { margin: 18px 0; color: var(--muted); font-size: 13px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
 .inquiry-editor { display: grid; gap: 8px; margin: 18px 0; color: var(--muted); font-size: 12px; font-weight: 700; }
 .inquiry-editor textarea { width: 100%; padding: 12px; border: 1px solid var(--line); background: var(--white); color: var(--text); font: inherit; font-weight: 400; resize: vertical; }
@@ -400,6 +417,8 @@ button { cursor: pointer; }
   .principle-grid { grid-template-columns: 1fr; }
   .principle-grid article { min-height: 155px; }
   .principle-grid h3 { margin-top: 17px; }
+  .member-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+  .member-profile { height: 250px; }
   .property-filter { padding: 15px; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
   .property-filter label { font-size: 9px; }
   .property-filter input, .property-filter select { min-height: 43px; padding-inline: 8px; font-size: 12px; }

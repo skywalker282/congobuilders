@@ -13,7 +13,7 @@ export type Project = {
   description: string;
   location?: string;
   customer?: string;
-  image: string;
+  image?: string;
   featured?: boolean;
 };
 
@@ -41,6 +41,14 @@ export type Testimonial = {
   customer: string;
   title?: string;
   content: string;
+  stars?: number;
+};
+
+export type Member = {
+  id: string;
+  name: string;
+  title?: string;
+  profile?: string;
 };
 
 type StrapiRecord = Record<string, unknown> & {
@@ -49,73 +57,12 @@ type StrapiRecord = Record<string, unknown> & {
   attributes?: Record<string, unknown>;
 };
 
-const image = (id: string) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1200`;
-
-const serviceImages = [
-  image('323780'),
-  image('4346254'),
-  image('209251'),
-  image('834892'),
-  image('257700'),
-  image('323705'),
-];
-
 export type Service = {
   slug: string;
   name: string;
   description: string;
-  image: string;
+  image?: string;
 };
-
-const serviceDefinitions = [
-  ['construction', 'Villas, apartment buildings, and commercial and industrial buildings.'],
-  ['civil', 'Roads, drainage channels, paving and slabs, retaining walls, and sanitation.'],
-  ['renovation', 'Tiling, painting, ceilings, roofing, and carpentry.'],
-  ['studies', 'Architectural plans, quantity estimates, and complete project supervision.'],
-  ['electricity', 'Domestic electrical installations and solar energy.'],
-  ['realEstate', 'Find published rental and sale listings or speak with our property team.'],
-] as const;
-
-export const fallbackServices: Service[] = serviceDefinitions.map(([slug, description], index) => ({
-  slug,
-  name: slug,
-  description,
-  image: serviceImages[index],
-}));
-
-export const fallbackProjects: Project[] = [
-  {
-    id: 'reference-residential',
-    slug: 'residential-construction',
-    title: 'Residential construction',
-    category: 'RESIDENTIAL',
-    status: 'COMPLETED',
-    description: 'A project reference for residential construction and finishing capabilities.',
-    location: 'Lubumbashi, Haut-Katanga',
-    image: image('323780'),
-  },
-  {
-    id: 'reference-civil',
-    slug: 'civil-engineering',
-    title: 'Civil engineering works',
-    category: 'CIVIL ENGINEERING',
-    status: 'ONGOING',
-    description: 'A project reference representing roads, drainage, paving, and site works.',
-    location: 'Haut-Katanga',
-    image: image('2079246'),
-  },
-  {
-    id: 'reference-commercial',
-    slug: 'commercial-building',
-    title: 'Commercial building',
-    category: 'COMMERCIAL',
-    status: 'PLANNED',
-    description: 'A project reference for commercial construction and site supervision.',
-    location: 'Lubumbashi, Haut-Katanga',
-    image: image('209251'),
-  },
-];
 
 const apiBase = (process.env.STRAPI_API_URL || 'https://buildersapi.salemcapital.cd')
   .replace(/\/+$/, '');
@@ -184,14 +131,14 @@ function slugify(value: string): string {
     .replace(/^-|-$/g, '');
 }
 
-async function getCollection(path: string, tags: string): Promise<StrapiRecord[]> {
+async function getCollection(path: string): Promise<StrapiRecord[]> {
   const token = process.env.STRAPI_API_TOKEN;
   const locale = await getLocale();
   const separator = path.includes('?') ? '&' : '?';
   try {
     const response = await fetch(`${apiBase}/api/${path}${separator}locale=${encodeURIComponent(locale)}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      next: { revalidate: 300, tags: [tags] },
+      next: { revalidate: 30 },
     });
 
     if (!response.ok) {
@@ -206,10 +153,8 @@ async function getCollection(path: string, tags: string): Promise<StrapiRecord[]
 }
 
 export async function getServices(): Promise<Service[]> {
-  const records = await getCollection('services?populate=*&pagination[pageSize]=100', 'services');
-  if (!records.length) return fallbackServices;
-
-  const services = records.flatMap((record, index) => {
+  const records = await getCollection('services?populate=*&pagination[pageSize]=100');
+  const services = records.flatMap((record) => {
     const data = fields(record);
     const name = text(data.name ?? data.title);
     if (!name) return [];
@@ -217,16 +162,14 @@ export async function getServices(): Promise<Service[]> {
       slug: text(data.slug) || slugify(name),
       name,
       description: text(data.description),
-      image: mediaUrl(data.cover ?? data.image) || serviceImages[index % serviceImages.length],
+      image: mediaUrl(data.cover ?? data.image),
     };
   });
-  return services.length ? services : fallbackServices;
+  return services;
 }
 
 export async function getProjects(): Promise<Project[]> {
-  const records = await getCollection('projects?populate=*&pagination[pageSize]=100', 'projects');
-  if (!records.length) return fallbackProjects;
-
+  const records = await getCollection('projects?populate=*&pagination[pageSize]=100');
   const projects = records.flatMap((record, index) => {
     const data = fields(record);
     const title = text(data.title ?? data.name);
@@ -242,18 +185,17 @@ export async function getProjects(): Promise<Project[]> {
       description: text(data.description),
       location: text(data.location) || undefined,
       customer: text(data.customer) || undefined,
-      image: cover || fallbackProjects[index % fallbackProjects.length].image,
+      image: cover,
       featured: Boolean(data.featured),
     };
   });
-  return projects.length ? projects : fallbackProjects;
+  return projects;
 }
 
 export async function getProperties({ includeUnavailable = false }: { includeUnavailable?: boolean } = {}): Promise<Property[]> {
   const availabilityFilter = includeUnavailable ? '' : 'filters[availability][$eq]=AVAILABLE&';
   const records = await getCollection(
     `properties?${availabilityFilter}populate=*&pagination[pageSize]=100`,
-    'properties',
   );
 
   return records.flatMap((record, index) => {
@@ -297,19 +239,39 @@ export async function getProperty(slug: string): Promise<Property | undefined> {
 
 export async function getTestimonials(): Promise<Testimonial[]> {
   const records = await getCollection(
-    'testimonials?pagination[pageSize]=6&sort[0]=id:desc',
-    'testimonials',
+    'testimonials?populate=*&pagination[pageSize]=100&sort[0]=id:desc',
   );
   return records.flatMap((record, index) => {
     const data = fields(record);
     const customer = text(data.customer);
     const content = text(data.content);
     if (!customer || !content) return [];
+    const stars = typeof data.stars === 'number'
+      ? Math.max(0, Math.min(5, Math.round(data.stars)))
+      : undefined;
     return [{
       id: String(data.documentId ?? data.id ?? index),
       customer,
       title: text(data.title) || undefined,
       content,
+      stars,
+    }];
+  });
+}
+
+export async function getMembers(): Promise<Member[]> {
+  const records = await getCollection(
+    'members?populate=*&pagination[pageSize]=100&sort[0]=name:asc',
+  );
+  return records.flatMap((record, index) => {
+    const data = fields(record);
+    const name = text(data.name);
+    if (!name) return [];
+    return [{
+      id: String(data.documentId ?? data.id ?? index),
+      name,
+      title: text(data.title) || undefined,
+      profile: mediaUrl(data.profile),
     }];
   });
 }

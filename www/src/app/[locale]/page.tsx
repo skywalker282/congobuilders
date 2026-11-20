@@ -6,7 +6,7 @@ import { getProjects, getProperties, getServices, getTestimonials } from '@/lib/
 import { localeAlternates } from '@/lib/seo';
 import { Hero, ProjectGrid, PropertyCard, SectionHeading, ServiceGrid, TestimonialList } from '@/components/site';
 
-export const revalidate = 300;
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

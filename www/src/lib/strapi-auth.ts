@@ -29,7 +29,7 @@ export type UserInquiry = {
   date: string;
   message: string;
   property: string;
-  status: string;
+  progress: 'pending' | 'confirmed' | 'declined';
   price: number | null;
   currency: 'USD' | 'CDF' | null;
 };
@@ -178,7 +178,9 @@ export async function getMyInquiries(token: string): Promise<
       date: typeof record.date === 'string' ? record.date : '',
       message: typeof record.message === 'string' ? record.message : '',
       property: typeof property.name === 'string' ? property.name : '',
-      status: typeof record.status === 'string' ? record.status : 'pending',
+      progress: record.progress === 'confirmed' || record.progress === 'declined'
+        ? record.progress
+        : 'pending',
       price: typeof record.price === 'number' && Number.isInteger(record.price) && record.price >= 0
         ? record.price
         : null,

@@ -4,7 +4,7 @@ import { EmptyProperties, PageIntro, PropertyCard, PropertyFilter } from '@/comp
 import { getProperties } from '@/lib/content';
 import { localeAlternates } from '@/lib/seo';
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 type Search = Record<string, string | string[] | undefined>;
 

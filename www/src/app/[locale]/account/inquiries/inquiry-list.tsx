@@ -68,8 +68,8 @@ export function InquiryList({ inquiries }: { inquiries: UserInquiry[] }) {
           <article className="inquiry-card" key={inquiry.id}>
             <div className="inquiry-card-header">
               <div><span className="eyebrow">{inquiry.date || t('inquiry')}</span><h2>{inquiry.property || t('propertyUnavailable')}</h2></div>
-              <span className={`inquiry-status-badge inquiry-status-${inquiry.status}`}>
-                {t('status')}: {inquiry.status === 'confirmed' ? t('statusConfirmed') : inquiry.status === 'declined' ? t('statusDeclined') : t('statusPending')}
+              <span className={`inquiry-progress-badge inquiry-progress-${inquiry.progress}`}>
+                {t('progress')}: {inquiry.progress === 'confirmed' ? t('progressConfirmed') : inquiry.progress === 'declined' ? t('progressDeclined') : t('progressPending')}
               </span>
             </div>
             {isEditing ? (
@@ -106,7 +106,7 @@ export function InquiryList({ inquiries }: { inquiries: UserInquiry[] }) {
                 <p className="inquiry-message">{inquiry.message}</p>
               </>
             )}
-            {inquiry.status === 'pending' && (
+            {inquiry.progress === 'pending' && (
               <div className="inquiry-actions">
                 {isEditing ? (
                   <>

@@ -18,7 +18,7 @@ export function ContactForm({
     customerEmail: string;
     propertyName: string;
     date: string;
-    status: 'pending';
+    progress: 'pending';
   };
   authenticated?: boolean;
   returnTo?: string;
@@ -78,10 +78,10 @@ export function ContactForm({
       {property && booking && <>
         <input type="hidden" name="customer" value={booking.customerId} />
         <input type="hidden" name="property" value={property} />
-        <input type="hidden" name="status" value={booking.status} />
+        <input type="hidden" name="progress" value={booking.progress} />
         <label>{a('bookingCustomer')}<input value={booking.customerEmail} readOnly /></label>
         <label>{a('bookingDate')}<input type="date" name="date" value={booking.date} readOnly /></label>
-        <label>{a('bookingStatus')}<input value={a('statusPending')} readOnly /></label>
+        <label>{a('bookingProgress')}<input value={a('progressPending')} readOnly /></label>
         <label>{a('bookingProperty')}<input value={booking.propertyName} readOnly /></label>
         <label>{a('bookingPrice')}<input name="price" type="number" min="0" max={Number.MAX_SAFE_INTEGER} step="1" required /></label>
         <label>{a('bookingCurrency')}<select name="currency" defaultValue="" required><option value="" disabled>{a('selectCurrency')}</option><option value="USD">USD</option><option value="CDF">CDF</option></select></label>

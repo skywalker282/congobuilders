@@ -8,7 +8,7 @@ import { PageIntro, ProjectGrid } from '@/components/site';
 import { getProjects, getServices } from '@/lib/content';
 import { localeAlternates } from '@/lib/seo';
 
-export const revalidate = 300;
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -43,7 +43,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   return <>
     <PageIntro eyebrow="Congo Builders · Expertise" title={title} description={description} />
-    <section className="section"><div className="content-wrap service-detail-layout"><div className="service-detail-image"><Image src={service.image} alt={title} fill sizes="(max-width: 760px) 100vw, 48vw" className="cover-image" /></div><div className="service-detail-copy"><span className="eyebrow">{nav('services')}</span><h2>{title}</h2><p>{description}</p><Link className="button button-primary" href={`/${locale}/contact`}>{nav('contact')} <ArrowRight size={16} /></Link></div></div></section>
+    <section className="section"><div className="content-wrap service-detail-layout"><div className="service-detail-image">{service.image ? <Image src={service.image} alt={title} fill sizes="(max-width: 760px) 100vw, 48vw" className="cover-image" /> : <span className="property-image-placeholder" aria-hidden="true">CB</span>}</div><div className="service-detail-copy"><span className="eyebrow">{nav('services')}</span><h2>{title}</h2><p>{description}</p><Link className="button button-primary" href={`/${locale}/contact`}>{nav('contact')} <ArrowRight size={16} /></Link></div></div></section>
     {projects.length > 0 && <section className="section section-dark"><div className="content-wrap"><div className="split-heading"><h2 className="related-heading related-heading-light">{common('explore')} {nav('projects')}</h2><Link className="text-link text-link-light" href={`/${locale}/projects`}><ArrowLeft size={16} /> {common('viewAll')}</Link></div><ProjectGrid projects={projects.slice(0, 3)} /></div></section>}
   </>;
 }
